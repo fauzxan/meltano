@@ -14,7 +14,7 @@ if t.TYPE_CHECKING:
     from sqlalchemy.orm import Session
 
 
-class DBStateStoreManager(StateStoreManager):
+class DBStateStoreManager(StateStoreManager):  # noqa: WPS214
     """StateStoreManager implementation for state stored in the system db."""
 
     label = "Database"
@@ -125,3 +125,11 @@ class DBStateStoreManager(StateStoreManager):
         Args:
             state_id: the state_id to unlock
         """
+
+    def get_all(self) -> list[JobState]:
+        """Get all job states.
+
+        Returns:
+            List of all job states
+        """
+        return self.session.query(JobState).all()

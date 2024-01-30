@@ -128,7 +128,7 @@ types-requests = "^2.31.0"
 meltano = "meltano.cli:main"
 
 [tool.pytest.ini_options]
-addopts = "--cov=meltano --cov=tests --doctest-modules --durations=10 --order-scope=module -ra -n auto --dist=loadfile"
+addopts = "--cov=meltano --cov=tests --doctest-modules --durations=10 --order-scope=module -ra -n auto --dist=loadfile --color=yes"
 asyncio_mode = "auto"
 log_cli = 1
 log_cli_format = "%(message)s"
