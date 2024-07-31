@@ -4291,4 +4291,4 @@ uv = ["uv"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.13"
-content-hash = "37eb25459abc2eafb46d45e9482a0acb4fc07f5bbf052f6bb3667afb38757894"
+content-hash = "c6cf50c3bdc975b71860a018bc3be8ae50ff1415576e8496d5a4b325b036728b"
