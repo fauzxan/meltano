@@ -14,6 +14,7 @@ from hashlib import sha1
 from io import StringIO
 from itertools import takewhile
 
+import anyio
 import structlog
 from jsonschema import Draft4Validator
 
@@ -336,7 +337,7 @@ class SingerTap(SingerPlugin):
 
         if state:
             if state.get(SINGER_STATE_KEY):
-                with state_path.open("w") as state_file:
+                async with await anyio.open_file(state_path, "w") as state_file:
                     json.dump(state.get(SINGER_STATE_KEY), state_file, indent=2)
         else:
             logger.warning("No state was found, complete import.")
@@ -421,7 +422,7 @@ class SingerTap(SingerPlugin):
 
         # test for the result to be a valid catalog
         try:
-            with catalog_path.open("r") as catalog_file:
+            async with await anyio.open_file(catalog_path) as catalog_file:
                 catalog = json.load(catalog_file)
                 Draft4Validator.check_schema(catalog)
         except Exception as err:
@@ -454,7 +455,7 @@ class SingerTap(SingerPlugin):
             )
         with StringIO("") as stderr_buff:
             try:
-                with catalog_path.open(mode="wb") as catalog:
+                async with await anyio.open_file(catalog_path, mode="wb") as catalog:
                     handle = await plugin_invoker.invoke_async(
                         "--discover",
                         stdout=asyncio.subprocess.PIPE,
