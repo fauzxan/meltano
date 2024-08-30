@@ -22,8 +22,9 @@ import structlog
 from smart_open import open
 
 from meltano.core.job_state import JobState
-from meltano.core.state_store.base import StateStoreManager
 from meltano.core.utils import remove_suffix
+
+from . import base
 
 if t.TYPE_CHECKING:
     from collections.abc import Iterator
@@ -36,7 +37,7 @@ class InvalidStateBackendConfigurationException(Exception):
     """State backend configuration is invalid."""
 
 
-class BaseFilesystemStateStoreManager(StateStoreManager):
+class BaseFilesystemStateStoreManager(base.StateStoreManager):
     """Base class for filesystem state backends."""
 
     delimiter = "/"

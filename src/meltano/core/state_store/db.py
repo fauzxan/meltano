@@ -7,14 +7,15 @@ import typing as t
 from sqlalchemy import select
 
 from meltano.core.job_state import JobState
-from meltano.core.state_store.base import StateStoreManager
 from meltano.core.utils import merge
+
+from . import base
 
 if t.TYPE_CHECKING:
     from sqlalchemy.orm import Session
 
 
-class DBStateStoreManager(StateStoreManager):
+class DBStateStoreManager(base.StateStoreManager):
     """StateStoreManager implementation for state stored in the system db."""
 
     label = "Database"

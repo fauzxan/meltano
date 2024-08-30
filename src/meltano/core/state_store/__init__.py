@@ -8,20 +8,15 @@ from enum import Enum
 from urllib.parse import urlparse
 
 from meltano.core.db import project_engine
-from meltano.core.state_store.azure import AZStorageStateStoreManager
-from meltano.core.state_store.db import DBStateStoreManager
-from meltano.core.state_store.filesystem import (
-    LocalFilesystemStateStoreManager,
-    WindowsFilesystemStateStoreManager,
-)
-from meltano.core.state_store.google import GCSStateStoreManager
-from meltano.core.state_store.s3 import S3StateStoreManager
+
+from . import azure, db, filesystem, google, s3
 
 if t.TYPE_CHECKING:
     from sqlalchemy.orm import Session
 
     from meltano.core.project_settings_service import ProjectSettingsService
-    from meltano.core.state_store.base import StateStoreManager
+
+    from .base import StateStoreManager
 
 
 class StateBackend(str, Enum):
@@ -55,11 +50,11 @@ class StateBackend(str, Enum):
             Mapping of StateBackend to associated StateStoreManager.
         """
         return {
-            self.SYSTEMDB: DBStateStoreManager,
-            self.LOCAL_FILESYSTEM: LocalFilesystemStateStoreManager,
-            self.S3: S3StateStoreManager,
-            self.AZURE: AZStorageStateStoreManager,
-            self.GCS: GCSStateStoreManager,
+            self.SYSTEMDB: db.DBStateStoreManager,
+            self.LOCAL_FILESYSTEM: filesystem.LocalFilesystemStateStoreManager,
+            self.S3: s3.S3StateStoreManager,
+            self.AZURE: azure.AZStorageStateStoreManager,
+            self.GCS: google.GCSStateStoreManager,
         }
 
     @property
@@ -90,7 +85,7 @@ def state_store_manager_from_project_settings(
     state_backend_uri: str = settings_service.get("state_backend.uri")
     parsed = urlparse(state_backend_uri)
     if state_backend_uri == StateBackend.SYSTEMDB:
-        return DBStateStoreManager(
+        return db.DBStateStoreManager(
             session=session or project_engine(settings_service.project)[1](),
         )
     scheme = parsed.scheme
@@ -109,6 +104,6 @@ def state_store_manager_from_project_settings(
     settings = (setting_def.name for setting_def in setting_defs)
     backend = StateBackend(scheme).manager
     if scheme == StateBackend.LOCAL_FILESYSTEM and "Windows" in platform.system():
-        backend = WindowsFilesystemStateStoreManager
+        backend = filesystem.WindowsFilesystemStateStoreManager
     kwargs = {name.split(".")[-1]: settings_service.get(name) for name in settings}
     return backend(**kwargs)

@@ -7,9 +7,8 @@ from contextlib import contextmanager
 from functools import cached_property
 
 from meltano.core.error import MeltanoError
-from meltano.core.state_store.filesystem import (
-    CloudStateStoreManager,
-)
+
+from . import filesystem
 
 if t.TYPE_CHECKING:
     from collections.abc import Iterator
@@ -47,7 +46,7 @@ def requires_azure():  # noqa: ANN201
     yield
 
 
-class AZStorageStateStoreManager(CloudStateStoreManager):
+class AZStorageStateStoreManager(filesystem.CloudStateStoreManager):
     """State backend for Azure Blob Storage."""
 
     label: str = "Azure Blob Storage"

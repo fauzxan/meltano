@@ -6,10 +6,7 @@ import typing as t
 from contextlib import contextmanager
 from functools import cached_property
 
-from meltano.core.state_store.filesystem import (
-    CloudStateStoreManager,
-    InvalidStateBackendConfigurationException,
-)
+from . import filesystem
 
 if t.TYPE_CHECKING:
     from collections.abc import Iterator
@@ -49,7 +46,7 @@ def requires_boto3():  # noqa: ANN201
     yield
 
 
-class S3StateStoreManager(CloudStateStoreManager):
+class S3StateStoreManager(filesystem.CloudStateStoreManager):
     """State backend for S3."""
 
     label: str = "AWS S3"
@@ -117,11 +114,11 @@ class S3StateStoreManager(CloudStateStoreManager):
                 )
                 return session.client("s3", endpoint_url=self.endpoint_url)
             if self.aws_secret_access_key:
-                raise InvalidStateBackendConfigurationException(
+                raise filesystem.InvalidStateBackendConfigurationException(
                     "AWS secret access key configured, but not AWS access key ID.",  # noqa: EM101
                 )
             if self.aws_access_key_id:
-                raise InvalidStateBackendConfigurationException(
+                raise filesystem.InvalidStateBackendConfigurationException(
                     "AWS access key ID configured, but no AWS secret access key.",  # noqa: EM101
                 )
             session = boto3.Session()

@@ -6,7 +6,7 @@ import typing as t
 from contextlib import contextmanager
 from functools import cached_property
 
-from meltano.core.state_store.filesystem import CloudStateStoreManager
+from . import filesystem
 
 if t.TYPE_CHECKING:
     from collections.abc import Iterator
@@ -46,7 +46,7 @@ def requires_gcs():  # noqa: ANN201
     yield
 
 
-class GCSStateStoreManager(CloudStateStoreManager):
+class GCSStateStoreManager(filesystem.CloudStateStoreManager):
     """State backend for Google Cloud Storage."""
 
     label: str = "Google Cloud Storage"
